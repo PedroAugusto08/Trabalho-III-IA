@@ -1,12 +1,69 @@
 {
-  "P1": "Você gosta de trabalhar em equipe?",
-  "P2": "Prefere atividades ao ar livre?",
-  "P3": "Gosta de lidar com números?",
-  "P4": "Prefere usar habilidades artísticas?",
-  "P5": "Se sente confortável trabalhando com tecnologia?",
-  "P6": "Gosta de resolver problemas complexos?",
-  "P7": "Prefere atividades que envolvam comunicação?",
-  "P8": "Se interessa por cuidar de outras pessoas?",
-  "P9": "Gosta de desafios físicos?",
-  "P10": "Prefere trabalhar em ambientes organizados?"
+  "question": "Você gosta de atividades ao ar livre?",
+  "yes": {
+    "question": "Você prefere atividades físicas?",
+    "yes": {
+      "question": "Você gosta de atividades competitivas?",
+      "yes": {
+        "result": ["Futebol", "Basquete", "Vôlei"]
+      },
+      "no": {
+        "question": "Você prefere praticar atividades em grupo?",
+        "yes": {
+          "result": ["Ciclismo em grupo", "Aulas de funcional ao ar livre"]
+        },
+        "no": {
+          "result": ["Corrida", "Calistenia ao ar livre"]
+        }
+      }
+    },
+    "no": {
+      "question": "Você gosta de explorar ambientes naturais?",
+      "yes": {
+        "result": ["Trilhas", "Acampamento"]
+      },
+      "no": {
+        "question": "Você prefere atividades relaxantes?",
+        "yes": {
+          "result": ["Meditação ao ar livre", "Yoga ao ar livre"]
+        },
+        "no": {
+          "result": ["Fotografia de rua", "Desenho urbano"]
+        }
+      }
+    }
+  },
+  "no": {
+    "question": "Você gosta de tecnologia?",
+    "yes": {
+      "question": "Você gosta de jogos que envolvem estratégia?",
+      "yes": {
+        "result": ["Xadrez online", "Videogames táticos"]
+      },
+      "no": {
+        "question": "Você gosta de consumir mídia (filmes, séries)?",
+        "yes": {
+          "result": ["Assistir filmes", "Ver séries"]
+        },
+        "no": {
+          "result": ["Programação", "Projetos eletrônicos"]
+        }
+      }
+    },
+    "no": {
+      "question": "Você gosta de atividades criativas/artísticas?",
+      "yes": {
+        "question": "Você prefere atividades relaxantes?",
+        "yes": {
+          "result": ["Desenho", "Pintura", "Crochê"]
+        },
+        "no": {
+          "result": ["Escultura", "Artesanato"]
+        }
+      },
+      "no": {
+        "result": ["Culinária", "Quebra-cabeças"]
+      }
+    }
+  }
 }
