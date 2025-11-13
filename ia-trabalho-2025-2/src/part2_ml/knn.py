@@ -8,7 +8,7 @@ from sklearn.pipeline import make_pipeline
 import matplotlib.pyplot as plt
 
 # Carregar o dataset
-df = pd.read_csv("Trabalho_1/diabetes_filtrado.csv")
+df = pd.read_csv("ia-trabalho-2025-2/data/processed/diabetes_filtrado.csv")
 
 # ===== Menu interativo para escolher o tamanho do dataset =====
 print("=" * 60)
