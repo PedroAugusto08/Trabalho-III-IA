@@ -7,7 +7,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
 # Carregar o conjunto de dados de diabetes
-df = pd.read_csv("Parte_2/diabetes_filtrado.csv")
+df = pd.read_csv("ia-trabalho-2025-2/data/processed/diabetes_filtrado.csv")
 
 # ===== Menu interativo para escolher o tamanho do dataset =====
 print("=" * 60)
