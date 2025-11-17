@@ -88,7 +88,7 @@ X_test_pca = pca.transform(X_test)
 
 # Treinar o modelo SVM
 start_time_train = time.time()
-svm = SVC(kernel='linear', probability=True)  # probability=True para ROC-AUC
+svm = SVC(kernel='linear', probability=True, random_state=42)  # random_state para reprodutibilidade
 svm.fit(X_train_pca, y_train)
 end_time_train = time.time()
 
@@ -159,7 +159,7 @@ print("\n" + "=" * 60)
 print("AVALIAÇÃO COM CROSS-VALIDATION")
 print("=" * 60)
 start_time_cv = time.time()
-svm_cv = SVC(kernel='linear', probability=True)
+svm_cv = SVC(kernel='linear', probability=True, random_state=42)
 scores = cross_val_score(svm_cv, X_train_pca, y_train, cv=5)
 end_time_cv = time.time()
 print(f'Cross-validation scores: {scores}')
