@@ -9,8 +9,8 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Carregar o conjunto de dados de diabetes
-df = pd.read_csv("ia-trabalho-2025-2/data/raw/diabetes_dataset.csv")
+# Carregar o dataset
+df = pd.read_csv("ia-trabalho-2025-2/data/diabetes_dataset.csv")
 
 # ===== Menu interativo para escolher o tamanho do dataset =====
 print("=" * 60)

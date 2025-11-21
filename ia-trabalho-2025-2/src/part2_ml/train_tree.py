@@ -9,8 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Carregar o dataset
-DF_PATH = "ia-trabalho-2025-2/data/processed/diabetes_filtrado.csv"
-df = pd.read_csv(DF_PATH)
+df = pd.read_csv("ia-trabalho-2025-2/data/diabetes_dataset.csv")
 
 # ===== Menu interativo para escolher o tamanho do dataset =====
 print("=" * 60)
