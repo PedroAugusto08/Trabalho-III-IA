@@ -82,7 +82,7 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 # Aplicar PCA para reduzir a dimensionalidade
-pca = PCA(n_components=0.95)  # Reduzindo para 2 componentes principais
+pca = PCA(n_components=0.95)  # Manter 95% da variância
 X_train_pca = pca.fit_transform(X_train)
 X_test_pca = pca.transform(X_test)
 

@@ -40,7 +40,7 @@ def validar_no(no, caminho="raiz"):
     validar_no(no['no'], f"{caminho} -> no")
 
 
-def carregar_arvore(arquivo='perguntas.json'):
+def carregar_arvore(arquivo='ia-trabalho-2025-2/src/part1_tree_manual/perguntas.json'):
     """
     Carrega e valida a árvore de decisão do arquivo JSON.
     
