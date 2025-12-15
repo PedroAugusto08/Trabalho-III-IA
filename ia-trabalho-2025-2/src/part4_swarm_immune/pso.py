@@ -1,101 +1,78 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import random
+import math
+from typing import Callable, List, Tuple
 
-# Número de cidades
-num_cities = 10
-cities = np.random.rand(num_cities, 2)
+Mask = List[int]
 
-# Matriz de distâncias
-distance_matrix = np.sqrt(((cities[:, np.newaxis, :] - cities[np.newaxis, :, :]) ** 2).sum(axis=2))
-np.fill_diagonal(distance_matrix, np.inf)  # Evitar divisão por zero
-
-# Visualização
-plt.scatter(cities[:, 0], cities[:, 1])
-for i, (x, y) in enumerate(cities):
-    plt.text(x, y, str(i))
-plt.title("Mapa das Cidades")
-plt.show()
+def sigmoid(x: float) -> float:
+    return 1.0 / (1.0 + math.exp(-x))
 
 
-class AntColony:
-    def __init__(self, distance_matrix, n_ants, n_best, n_iterations, decay, alpha=1, beta=2):
-        self.distance_matrix = distance_matrix
-        self.pheromone = np.ones(self.distance_matrix.shape) / len(distance_matrix)
-        self.n_ants = n_ants
-        self.n_best = n_best
-        self.n_iterations = n_iterations
-        self.decay = decay
-        self.alpha = alpha
-        self.beta = beta
+def pso_feature_selection(
+    fitness_fn: Callable[[Mask], float],
+    d: int,
+    n_particles: int = 30,
+    n_iterations: int = 50,
+    w: float = 0.7,
+    c1: float = 1.5,
+    c2: float = 1.5,
+    p_on: float = 0.3,
+    seed: int | None = None
+) -> Tuple[Mask, float]:
 
-    def run(self):
-        all_time_shortest_path = (None, np.inf)
-        for _ in range(self.n_iterations):
-            all_paths = self.construct_paths()
-            self.spread_pheromones(all_paths, self.n_best)
-            shortest_path = min(all_paths, key=lambda x: x[1])
-            if shortest_path[1] < all_time_shortest_path[1]:
-                all_time_shortest_path = shortest_path
-            self.pheromone *= self.decay
-        return all_time_shortest_path
+    if seed is not None:
+        random.seed(seed)
 
-    def construct_paths(self):
-        all_paths = []
-        for _ in range(self.n_ants):
-            path = self.generate_path(0)
-            all_paths.append((path, self.path_distance(path)))
-        return all_paths
+    # Inicialização
+    positions: List[Mask] = []
+    velocities: List[List[float]] = []
 
-    def generate_path(self, start):
-        path = []
-        visited = set([start])
-        prev = start
-        for _ in range(len(self.distance_matrix) - 1):
-            move = self.pick_move(self.pheromone[prev], self.distance_matrix[prev], visited)
-            path.append((prev, move))
-            prev = move
-            visited.add(move)
-        path.append((prev, start))
-        return path
+    for _ in range(n_particles):
+        pos = [1 if random.random() < p_on else 0 for _ in range(d)]
+        if sum(pos) == 0:
+            pos[random.randrange(d)] = 1
 
-    def pick_move(self, pheromone, dist, visited):
-        pheromone = np.copy(pheromone)
-        pheromone[list(visited)] = 0
+        vel = [random.uniform(-1, 1) for _ in range(d)]
 
-        heuristic = 1.0 / dist
-        heuristic[np.isinf(heuristic)] = 0
+        positions.append(pos)
+        velocities.append(vel)
 
-        row = (pheromone ** self.alpha) * (heuristic ** self.beta)
+    pbest = [p.copy() for p in positions]
+    pbest_val = [fitness_fn(p) for p in positions]
 
-        if row.sum() == 0:
-            unvisited = list(set(range(len(self.distance_matrix))) - visited)
-            move = np.random.choice(unvisited)
-        else:
-            norm_row = row / row.sum()
-            move = np.random.choice(range(len(self.distance_matrix)), p=norm_row)
-        return move
+    gbest_idx = min(range(n_particles), key=lambda i: pbest_val[i])
+    gbest = pbest[gbest_idx].copy()
+    gbest_val = pbest_val[gbest_idx]
 
-    def path_distance(self, path):
-        total_dist = 0.0
-        for i, j in path:
-            total_dist += self.distance_matrix[i, j]
-        return total_dist
+    # Loop principal
+    for it in range(n_iterations):
+        for i in range(n_particles):
+            for j in range(d):
+                r1 = random.random()
+                r2 = random.random()
 
-    def spread_pheromones(self, all_paths, n_best):
-        sorted_paths = sorted(all_paths, key=lambda x: x[1])
-        for path, dist in sorted_paths[:n_best]:
-            for i, j in path:
-                self.pheromone[i, j] += 1.0 / dist
+                velocities[i][j] = (
+                    w * velocities[i][j]
+                    + c1 * r1 * (pbest[i][j] - positions[i][j])
+                    + c2 * r2 * (gbest[j] - positions[i][j])
+                )
 
+                prob = sigmoid(velocities[i][j])
+                positions[i][j] = 1 if random.random() < prob else 0
 
-colony = AntColony(distance_matrix, n_ants=10, n_best=3, n_iterations=100, decay=0.95)
-shortest_path = colony.run()
+            if sum(positions[i]) == 0:
+                positions[i][random.randrange(d)] = 1
 
-print("Melhor caminho encontrado:", shortest_path)
+            val = fitness_fn(positions[i])
 
-# Visualização do caminho
-path_indices = [i for i, j in shortest_path[0]] + [shortest_path[0][0][0]]
-path_points = cities[path_indices]
-plt.plot(path_points[:, 0], path_points[:, 1], marker="o")
-plt.title("Caminho Encontrado pela Colônia de Formigas")
-plt.show()
+            if val < pbest_val[i]:
+                pbest[i] = positions[i].copy()
+                pbest_val[i] = val
+
+                if val < gbest_val:
+                    gbest = positions[i].copy()
+                    gbest_val = val
+
+        print(f"Iteração {it+1}: melhor fitness = {gbest_val:.6f}")
+
+    return gbest, gbest_val
